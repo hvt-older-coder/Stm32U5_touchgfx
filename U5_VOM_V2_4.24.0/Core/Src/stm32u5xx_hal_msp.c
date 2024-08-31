@@ -226,7 +226,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     handle_GPDMA1_Channel11.Init.Request = GPDMA1_REQUEST_SPI1_TX;
     handle_GPDMA1_Channel11.Init.BlkHWRequest = DMA_BREQ_SINGLE_BURST;
     handle_GPDMA1_Channel11.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    handle_GPDMA1_Channel11.Init.SrcInc = DMA_SINC_FIXED;
+    handle_GPDMA1_Channel11.Init.SrcInc = DMA_SINC_INCREMENTED;
     handle_GPDMA1_Channel11.Init.DestInc = DMA_DINC_FIXED;
     handle_GPDMA1_Channel11.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_BYTE;
     handle_GPDMA1_Channel11.Init.DestDataWidth = DMA_DEST_DATAWIDTH_BYTE;
@@ -248,9 +248,6 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
       Error_Handler();
     }
 
-    /* SPI1 interrupt Init */
-    HAL_NVIC_SetPriority(SPI1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(SPI1_IRQn);
   /* USER CODE BEGIN SPI1_MspInit 1 */
 
   /* USER CODE END SPI1_MspInit 1 */
@@ -308,9 +305,6 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM3_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM3_CLK_ENABLE();
-    /* TIM3 interrupt Init */
-    HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM3_IRQn);
   /* USER CODE BEGIN TIM3_MspInit 1 */
 
   /* USER CODE END TIM3_MspInit 1 */

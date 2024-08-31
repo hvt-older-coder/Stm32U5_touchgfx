@@ -71,7 +71,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef handle_GPDMA1_Channel11;
-extern uint8_t spiDmaTransferComplete;
+//extern uint8_t spiDmaTransferComplete;
 extern TIM_HandleTypeDef htim3;
 extern uint8_t update_ui;
 
@@ -81,6 +81,7 @@ extern uint8_t update_ui;
 #define DC_H() HAL_GPIO_WritePin(DISPL_DC_GPIO_Port, DISPL_DC_Pin, GPIO_PIN_SET)
 #define RST_L() HAL_GPIO_WritePin(DISPL_RST_GPIO_Port, DISPL_RST_Pin, GPIO_PIN_RESET)
 #define RST_H() HAL_GPIO_WritePin(DISPL_RST_GPIO_Port, DISPL_RST_Pin, GPIO_PIN_SET)
+#define LED_H() HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET)
 
 /* USER CODE END Private defines */
 

@@ -51,7 +51,7 @@ DMA_HandleTypeDef handle_GPDMA1_Channel11;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-uint8_t spiDmaTransferComplete;
+//uint8_t spiDmaTransferComplete;
 uint8_t update_ui = 0;
 
 /* USER CODE END PV */
@@ -66,6 +66,7 @@ static void MX_ICACHE_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_CRC_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -114,9 +115,10 @@ int main(void)
   MX_CRC_Init();
   MX_ADC1_Init();
   MX_TouchGFX_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET);
-  //ILI9341_Init();
   Displ_Init(Displ_Orientat_0);		// initialize the display and set the initial display orientation (here is orientaton: 0°) - THIS FUNCTION MUST PRECEED ANY OTHER DISPLAY FUNCTION CALL.
   Displ_BackLight('1');  			// initialize backlight and turn it on at init level
   touchgfxSignalVSync();
@@ -128,11 +130,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  //ILI9341_Fill_Screen(RED);
-  //HAL_Delay(1000);
-  //ILI9341_Fill_Screen(GREEN);
-  //testFillScreen();
-  //Displ_PerfTest();
   while (1)
   {
     /* USER CODE END WHILE */
@@ -141,9 +138,8 @@ int main(void)
     /* USER CODE BEGIN 3 */
   if(count_stick++ == 5000000)
   {
-	  //update_ui = 1;
+	  update_ui = 1;
 	  count_stick = 0;
-	  BSP_LED_Toggle(LED_GREEN);
   }
   }
   /* USER CODE END 3 */
@@ -221,6 +217,23 @@ static void SystemPower_Config(void)
   }
 /* USER CODE BEGIN PWR */
 /* USER CODE END PWR */
+}
+
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* SPI1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(SPI1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(SPI1_IRQn);
+  /* GPDMA1_Channel11_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(GPDMA1_Channel11_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(GPDMA1_Channel11_IRQn);
+  /* TIM3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM3_IRQn);
 }
 
 /**
@@ -331,15 +344,12 @@ static void MX_GPDMA1_Init(void)
   /* Peripheral clock enable */
   __HAL_RCC_GPDMA1_CLK_ENABLE();
 
-  /* GPDMA1 interrupt Init */
-    HAL_NVIC_SetPriority(GPDMA1_Channel11_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(GPDMA1_Channel11_IRQn);
-
   /* USER CODE BEGIN GPDMA1_Init 1 */
 
   /* USER CODE END GPDMA1_Init 1 */
   /* USER CODE BEGIN GPDMA1_Init 2 */
-
+    //handle_GPDMA1_Channel11.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_BYTE;
+    //handle_GPDMA1_Channel11.Init.DestDataWidth  = DMA_SRC_DATAWIDTH_BYTE;
   /* USER CODE END GPDMA1_Init 2 */
 
 }

@@ -21,8 +21,8 @@ extern TIM_HandleTypeDef BKLIT_T;
 #endif
 //extern TIM_HandleTypeDef TGFX_T;
 
-extern volatile uint8_t Touch_PenDown;// set to 1 by pendown interrupt callback, reset to 0 by sw
-Displ_Orientat_e current_orientation;// it records the active display orientation. Set by Displ_Orientation
+extern volatile uint8_t Touch_PenDown; // set to 1 by pendown interrupt callback, reset to 0 by sw
+Displ_Orientat_e current_orientation; // it records the active display orientation. Set by Displ_Orientation
 volatile uint8_t Displ_SpiAvailable = 1; // 0 if SPI is busy or 1 if it is free (transm cplt)
 int16_t _width;       							///< (oriented) display width
 int16_t _height;      							///< (oriented) display height
@@ -57,7 +57,7 @@ void Displ_Select(void) {
 //			HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET);	// select display
 //		}
 //	}
-	HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET);// select display
+	HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET); // select display
 }
 
 /**************************
@@ -74,7 +74,8 @@ void Displ_Transmit(GPIO_PinState DC_Status, uint8_t *data, uint16_t dataSize,
 	while (!Displ_SpiAvailable) {
 	}; // waiting for a free SPI port. Flag is set to 1 by transmission-complete interrupt callback
 
-	Displ_Select();
+	//Displ_Select();
+	CS_L();
 	HAL_GPIO_WritePin(DISPL_DC_GPIO_Port, DISPL_DC_Pin, DC_Status);
 
 	if (isTouchGFXBuffer) {
@@ -105,24 +106,31 @@ void Displ_Transmit(GPIO_PinState DC_Status, uint8_t *data, uint16_t dataSize,
 
 #ifdef DISPLAY_SPI_INTERRUPT_MODE
 		Displ_SpiAvailable=0;
-		HAL_SPI_Transmit_IT(&DISPL_SPI_PORT , data, dataSize);
+		if(HAL_SPI_Transmit_IT(&DISPL_SPI_PORT , data, dataSize) != HAL_OK){
+			while(Displ_SpiAvailable == 0);
+		}
 #else
 #ifdef DISPLAY_SPI_DMA_MODE
-		if (dataSize<DISPL_DMA_CUTOFF) {
+	if (dataSize < DISPL_DMA_CUTOFF) {
 #endif //DISPLAY_SPI_DMA_MODE
-	Displ_SpiAvailable = 0;
-	HAL_SPI_Transmit(&DISPL_SPI_PORT, data, dataSize, HAL_MAX_DELAY);
-	Displ_SpiAvailable = 1;
+		Displ_SpiAvailable = 0;
+		if (HAL_SPI_Transmit(&DISPL_SPI_PORT, data, dataSize, HAL_MAX_DELAY)
+				!= HAL_OK) {
+			while (1)
+				;	//trap error.
+		}
+		Displ_SpiAvailable = 1;
 #ifdef DISPLAY_USING_TOUCHGFX
-			if (isTouchGFXBuffer){
-				DisplayDriver_TransferCompleteCallback();
-			}
+		if (isTouchGFXBuffer) {
+			DisplayDriver_TransferCompleteCallback();
+		}
 #endif //DISPLAY_USING_TOUCHGFX
 #ifdef DISPLAY_SPI_DMA_MODE
-		} else {
-			Displ_SpiAvailable=0;
-			HAL_SPI_Transmit_DMA(&DISPL_SPI_PORT , data, dataSize);
-		}
+	} else {
+
+		Displ_SpiAvailable = 0;
+		if (HAL_SPI_Transmit_DMA(&DISPL_SPI_PORT, data, dataSize)!= HAL_OK) { while (1);}
+	}
 #endif //DISPLAY_SPI_DMA_MODE
 #endif //DISPLAY_SPI_INTERRUPT_MODE
 }
@@ -429,8 +437,7 @@ void Displ_Init(Displ_Orientat_e orientation) {
 }
 
 /*Ser rotation of the screen - changes x0 and y0*/
-void ILI9XXX_Set_Rotation(uint8_t Rotation)
-{
+void ILI9XXX_Set_Rotation(uint8_t Rotation) {
 
 	uint8_t screen_rotation = Rotation;
 
@@ -442,8 +449,8 @@ void ILI9XXX_Set_Rotation(uint8_t Rotation)
 		Dislp_WriteData_Single(0x40 | 0x08);
 //		LCD_WIDTH = 240;
 //		LCD_HEIGHT = 320;
-		_height = 	240;
-		_width 	= 	320;
+		_height = 240;
+		_width = 320;
 		break;
 	case SCREEN_HORIZONTAL_1:
 		Dislp_WriteData_Single(0x20 | 0x08);
@@ -513,8 +520,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 
 #ifdef DISPLAY_USING_TOUCHGFX
 		DisplayDriver_TransferCompleteCallback();
-	#endif
-		spiDmaTransferComplete = 0;
+#endif
+		//spiDmaTransferComplete = 0;
 	}
 }
 
@@ -1246,8 +1253,7 @@ uint32_t Displ_BackLight(uint8_t cmd) {
 		break;
 	}
 #ifndef DISPLAY_DIMMING_MODE
-	//return HAL_GPIO_ReadPin(DISPL_LED_GPIO_Port, DISPL_LED_Pin);
-	HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET);
+	LED_H();
 	return 0;
 #else
 	return (BKLIT_TIMER->BKLIT_CCR);
@@ -1283,11 +1289,15 @@ void touchgfxDisplayDriverTransmitBlock(const uint8_t *pixels, uint16_t x,
  * 			the tick timer for TouchGFX
  *********************************************************/
 #ifdef DISPLAY_USING_TOUCHGFX
-
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim){
-	if (htim==&TGFX_T){
-		  touchgfxSignalVSync();
-		  update_ui = 1;
+static uint8_t count_14 = 0;
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	if (htim == &TGFX_T) {
+		touchgfxSignalVSync();
+	}
+	if(count_14++ == 14)
+	{
+		count_14 = 0;
+		BSP_LED_Toggle(LED_GREEN);
 	}
 }
 #endif //DISPLAY_USING_TOUCHGFX
