@@ -53,7 +53,27 @@ TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN PV */
 //uint8_t spiDmaTransferComplete;
 uint8_t update_ui = 0;
+uint32_t adc_value = 0;
+/* Definitions of environment analog values */
+  /* Value of analog reference voltage (Vref+), connected to analog voltage   */
+  /* supply Vdda (unit: mV).                                                  */
+  #define VDDA_APPLI                       (3300UL)
 
+  /* Init variable out of expected ADC conversion data range */
+  #define VAR_CONVERTED_DATA_INIT_VALUE    (__LL_ADC_DIGITAL_SCALE(ADC1, LL_ADC_RESOLUTION_12B) + 1)
+
+/* Variables for ADC conversion data */
+__IO uint16_t uhADCxConvertedData = VAR_CONVERTED_DATA_INIT_VALUE; /* ADC group regular conversion data */
+
+/* Variables for ADC conversion data computation to physical values */
+uint16_t uhADCxConvertedData_Voltage_mVolt = 0;  /* Value of voltage calculated from ADC conversion data (unit: mV) */
+
+/* Variable to report status of ADC group regular unitary conversion          */
+/*  0: ADC group regular unitary conversion is not completed                  */
+/*  1: ADC group regular unitary conversion is completed                      */
+/*  2: ADC group regular unitary conversion has not been started yet          */
+/*     (initial state)                                                        */
+__IO uint8_t ubAdcGrpRegularUnitaryConvStatus = 2; /* Variable set into ADC interruption callback */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +93,54 @@ static void MX_NVIC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+  /* Note: Disable ADC interruption that caused this error before entering in
+           infinite loop below. */
 
+  /* In case of error due to overrun: Disable ADC group regular overrun interruption */
+  LL_ADC_DisableIT_OVR(ADC1);
+
+  /* Error reporting */
+  Error_Handler();
+}
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+  /* Retrieve ADC conversion data */
+  uhADCxConvertedData = HAL_ADC_GetValue(hadc);
+
+  /* Computation of ADC conversions raw data to physical values           */
+  /* using helper macro.                                                  */
+  uhADCxConvertedData_Voltage_mVolt = __LL_ADC_CALC_DATA_TO_VOLTAGE(ADC1, VDDA_APPLI, uhADCxConvertedData, LL_ADC_RESOLUTION_12B);
+
+  /* Update status variable of ADC unitary conversion                     */
+  ubAdcGrpRegularUnitaryConvStatus = 1;
+
+}
+void get_adc_value(void)
+{
+	//ADC_Enable(&hadc1);
+	//HAL_ADC_Start(&hadc1);
+	if(HAL_ADC_Start_IT(&hadc1) != HAL_OK){
+		Error_Handler();
+	}
+	/* For this example purpose, wait until conversion is done */
+	while (ubAdcGrpRegularUnitaryConvStatus != 1);
+
+	/* Reset status variable of ADC group regular unitary conversion */
+	ubAdcGrpRegularUnitaryConvStatus = 0;
+	/* Note: ADC group regular conversions data are stored into array         */
+	/*       "uhADCxConvertedData"                                            */
+	/*       (for debug: see variable content into watch window).             */
+
+	/* Note: ADC conversion data are computed to physical values              */
+	/*       into array "uhADCxConvertedData_Voltage_mVolt" using             */
+	/*       ADC LL driver helper macro "__LL_ADC_CALC_DATA_TO_VOLTAGE()"     */
+	/*       (for debug: see variable content with debugger)                  */
+	/*       in IRQ handler callback function.                                */
+	adc_value = uhADCxConvertedData_Voltage_mVolt;
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -123,6 +190,21 @@ int main(void)
   Displ_BackLight('1');  			// initialize backlight and turn it on at init level
   touchgfxSignalVSync();
   HAL_TIM_Base_Start_IT(&TGFX_T);
+  /* Perform ADC calibration */
+	if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED) != HAL_OK)
+	{
+	  /* Calibration Error */
+	  Error_Handler();
+	}
+#ifdef SIMULATING_VOLTAGE_TIMER_PWM
+	/*## Start PWM signals generation #######################################*/
+	  /* Start channel 1 */
+	  if (HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3) != HAL_OK)
+	  {
+	    /* PWM Generation Error */
+	    Error_Handler();
+	  }
+#endif
   /* USER CODE END 2 */
 
   /* Initialize led */
@@ -136,10 +218,11 @@ int main(void)
 
   MX_TouchGFX_Process();
     /* USER CODE BEGIN 3 */
-  if(count_stick++ == 5000000)
+  if(count_stick++ == 100)
   {
-	  update_ui = 1;
+	  //update_ui = 1;
 	  count_stick = 0;
+	  get_adc_value();
   }
   }
   /* USER CODE END 3 */
@@ -173,7 +256,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLMBOOST = RCC_PLLMBOOST_DIV4;
   RCC_OscInitStruct.PLL.PLLM = 3;
-  RCC_OscInitStruct.PLL.PLLN = 10;
+  RCC_OscInitStruct.PLL.PLLN = 8;
   RCC_OscInitStruct.PLL.PLLP = 2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 1;
@@ -195,7 +278,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -257,8 +340,8 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
-  hadc1.Init.Resolution = ADC_RESOLUTION_14B;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV2;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.GainCompensation = 0;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
@@ -271,7 +354,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
   hadc1.Init.LeftBitShift = ADC_LEFTBITSHIFT_NONE;
   hadc1.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;
   hadc1.Init.OversamplingMode = DISABLE;
@@ -282,7 +365,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_VBAT;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_5CYCLE;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -411,7 +494,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -462,9 +545,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 160-1;
+  htim3.Init.Prescaler = 128-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 71428;
+  htim3.Init.Period = 41665;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -505,20 +588,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DISPL_DC_GPIO_Port, DISPL_DC_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, DISPL_LED_Pin|DISPL_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(DISPL_RST_GPIO_Port, DISPL_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : DISPL_DC_Pin */
-  GPIO_InitStruct.Pin = DISPL_DC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(DISPL_DC_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, DISPL_DC_Pin|V_SIMULATION_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : DISPL_LED_Pin */
   GPIO_InitStruct.Pin = DISPL_LED_Pin;
@@ -540,6 +616,28 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(DISPL_RST_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DISPL_DC_Pin */
+  GPIO_InitStruct.Pin = DISPL_DC_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(DISPL_DC_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : V_SIMULATION_Pin */
+  GPIO_InitStruct.Pin = V_SIMULATION_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(V_SIMULATION_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

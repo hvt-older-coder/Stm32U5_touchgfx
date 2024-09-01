@@ -2,7 +2,11 @@
 #define MODELLISTENER_HPP
 
 #include <gui/model/Model.hpp>
-
+#ifndef SIMULATOR
+extern "C" {
+#include "main.h"
+}
+#endif
 class ModelListener
 {
 public:
@@ -14,7 +18,10 @@ public:
     {
         model = m;
     }
+#ifndef SIMULATOR
     virtual void myUpdate(){}
+    virtual void updateVOM(uint32_t voltage_mV){}
+#endif
 
 protected:
     Model* model;

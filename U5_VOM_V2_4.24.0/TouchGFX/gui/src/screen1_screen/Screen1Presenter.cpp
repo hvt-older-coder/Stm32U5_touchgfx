@@ -16,7 +16,13 @@ void Screen1Presenter::deactivate()
 {
 
 }
+#ifndef SIMULATOR
 void Screen1Presenter::myUpdate()
 {
 	view.myUpdateGauge();
 }
+void Screen1Presenter::updateVOM(uint32_t voltage_mV)
+{
+	view.updateVOM(voltage_mV);
+}
+#endif

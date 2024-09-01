@@ -57,7 +57,8 @@ void Displ_Select(void) {
 //			HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET);	// select display
 //		}
 //	}
-	HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET); // select display
+	//HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET); // select display
+	CS_L();
 }
 
 /**************************
@@ -427,7 +428,8 @@ void Displ_Init(Displ_Orientat_e orientation) {
 //		HAL_GPIO_WritePin(TOUCH_CS_GPIO_Port, TOUCH_CS_Pin, GPIO_PIN_SET);		// unselect touch (will be selected at writing time)
 //	} else
 	{						// otherwise leave both port permanently selected
-		HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET); // select display
+		//HAL_GPIO_WritePin(DISPL_CS_GPIO_Port, DISPL_CS_Pin, GPIO_PIN_RESET); // select display
+		CS_L();
 		//SET_DISPL_SPI_BAUDRATE;
 		//HAL_GPIO_WritePin(TOUCH_CS_GPIO_Port, TOUCH_CS_Pin, GPIO_PIN_RESET);	// select touch
 		//SET_TOUCH_SPI_BAUDRATE;
@@ -1211,10 +1213,12 @@ uint32_t Displ_BackLight(uint8_t cmd) {
 #ifndef DISPLAY_DIMMING_MODE
 	case 'F':
 	case '1':
-		HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET);
+		//HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET);
+		LED_H();
 		break;
 	case '0':
-		HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_RESET);
+		//HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_RESET);
+		LED_L();
 		break;
 #else
 	case 'F':
@@ -1289,15 +1293,20 @@ void touchgfxDisplayDriverTransmitBlock(const uint8_t *pixels, uint16_t x,
  * 			the tick timer for TouchGFX
  *********************************************************/
 #ifdef DISPLAY_USING_TOUCHGFX
-static uint8_t count_14 = 0;
+static uint8_t count_24 = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim == &TGFX_T) {
 		touchgfxSignalVSync();
 	}
-	if(count_14++ == 14)
+
+	if(count_24++ == 24)
 	{
-		count_14 = 0;
+		count_24 = 0;
 		BSP_LED_Toggle(LED_GREEN);
+	}
+	if(count_24 % 11 == 0)
+	{
+		update_ui = 1;
 	}
 }
 #endif //DISPLAY_USING_TOUCHGFX

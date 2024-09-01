@@ -3,7 +3,11 @@
 
 #include <gui/model/ModelListener.hpp>
 #include <mvp/Presenter.hpp>
-
+#ifndef SIMULATOR
+extern "C" {
+	#include "main.h"
+}
+#endif
 using namespace touchgfx;
 
 class Screen1View;
@@ -26,8 +30,10 @@ public:
     virtual void deactivate();
 
     virtual ~Screen1Presenter() {}
+#ifndef SIMULATOR
     void myUpdate();
-
+    void updateVOM(uint32_t voltage_mV);
+#endif
 
 private:
     Screen1Presenter();

@@ -8,11 +8,17 @@
             "Type": "Box",
             "Name": "box1",
             "Width": 240,
-            "Height": 320,
+            "Height": 320
+          },
+          {
+            "Type": "Box",
+            "Name": "box2",
+            "Width": 240,
+            "Height": 80,
             "Color": {
-              "Red": 219,
-              "Green": 215,
-              "Blue": 215
+              "Red": 35,
+              "Green": 114,
+              "Blue": 153
             }
           },
           {
@@ -43,48 +49,51 @@
             "ArcCapStyle": "Butt"
           },
           {
-            "Type": "Box",
-            "Name": "box2",
-            "Width": 240,
-            "Height": 71,
-            "Color": {
-              "Red": 204,
-              "Green": 202,
-              "Blue": 202
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 3,
+            "Y": 28,
+            "Width": 133,
+            "Height": 24,
+            "TextId": "voltageTextID",
+            "TextRotation": "0",
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_HDBH",
+              "UseBuffer": true,
+              "BufferSize": 5
             }
           },
           {
             "Type": "TextArea",
-            "Name": "textArea1",
-            "X": 9,
-            "Y": 15,
-            "Width": 71,
-            "Height": 20,
-            "TextId": "__SingleUse_0BYB",
+            "Name": "textArea2",
+            "X": 3,
+            "Width": 127,
+            "Height": 24,
+            "TextId": "currentTextID",
             "TextRotation": "0",
-            "AutoSize": true
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_XJHD",
+              "UseBuffer": true,
+              "BufferSize": 5
+            }
           },
           {
             "Type": "TextArea",
-            "Name": "textArea1_2",
-            "X": 126,
-            "Y": 15,
-            "Width": 107,
-            "Height": 20,
-            "TextId": "__SingleUse_NVB1",
+            "Name": "textArea3",
+            "X": 3,
+            "Y": 56,
+            "Width": 130,
+            "Height": 24,
+            "TextId": "powerTextID",
             "TextRotation": "0",
-            "AutoSize": true
-          },
-          {
-            "Type": "TextArea",
-            "Name": "textArea1_1",
-            "X": 9,
-            "Y": 42,
-            "Width": 56,
-            "Height": 20,
-            "TextId": "__SingleUse_SGVH",
-            "TextRotation": "0",
-            "AutoSize": true
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_7NX2",
+              "UseBuffer": true,
+              "BufferSize": 5
+            }
           }
         ],
         "Interactions": []

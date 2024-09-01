@@ -17,8 +17,10 @@ void Model::tick()
 {
 #ifndef SIMULATOR
 	if(update_ui){
-		modelListener->myUpdate();
+		//modelListener->myUpdate();
+		modelListener->updateVOM(uhADCxConvertedData_Voltage_mVolt);
 		update_ui = 0;
+
 	}
 #endif
 }

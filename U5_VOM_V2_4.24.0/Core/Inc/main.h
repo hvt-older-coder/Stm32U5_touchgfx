@@ -34,6 +34,8 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "z_displ_ILI9XXX.h"
 extern uint8_t update_ui;
+extern uint32_t adc_value;
+extern uint16_t uhADCxConvertedData_Voltage_mVolt;
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,14 +61,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define DISPL_DC_Pin GPIO_PIN_1
-#define DISPL_DC_GPIO_Port GPIOC
 #define DISPL_LED_Pin GPIO_PIN_0
 #define DISPL_LED_GPIO_Port GPIOA
 #define DISPL_CS_Pin GPIO_PIN_4
 #define DISPL_CS_GPIO_Port GPIOA
 #define DISPL_RST_Pin GPIO_PIN_0
 #define DISPL_RST_GPIO_Port GPIOB
+#define DISPL_DC_Pin GPIO_PIN_7
+#define DISPL_DC_GPIO_Port GPIOC
+#define V_SIMULATION_Pin GPIO_PIN_10
+#define V_SIMULATION_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 extern SPI_HandleTypeDef hspi1;
@@ -82,6 +86,7 @@ extern uint8_t update_ui;
 #define RST_L() HAL_GPIO_WritePin(DISPL_RST_GPIO_Port, DISPL_RST_Pin, GPIO_PIN_RESET)
 #define RST_H() HAL_GPIO_WritePin(DISPL_RST_GPIO_Port, DISPL_RST_Pin, GPIO_PIN_SET)
 #define LED_H() HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_SET)
+#define LED_L() HAL_GPIO_WritePin(DISPL_LED_GPIO_Port, DISPL_LED_Pin, GPIO_PIN_RESET)
 
 /* USER CODE END Private defines */
 
