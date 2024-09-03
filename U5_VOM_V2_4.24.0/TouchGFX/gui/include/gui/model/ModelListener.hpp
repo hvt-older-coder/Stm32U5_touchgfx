@@ -20,7 +20,7 @@ public:
     }
 #ifndef SIMULATOR
     virtual void myUpdate(){}
-    virtual void updateVOM(uint32_t voltage_mV){}
+    virtual void updateVOM(uint32_t voltage_mV, unsigned int fps){}
 #endif
 
 protected:

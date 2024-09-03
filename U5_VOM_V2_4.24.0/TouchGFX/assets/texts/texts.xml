@@ -6,11 +6,17 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_7DEW" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">00</Translation>
+      </Text>
+      <Text Id="fpsTextID" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">fps: &lt;value&gt;</Translation>
+      </Text>
       <Text Id="__SingleUse_7NX2" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">0000</Translation>
       </Text>
       <Text Id="powerTextID" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">P(mW):&lt;value&gt;</Translation>
+        <Translation Language="GB">P(mW) : &lt;value&gt;</Translation>
       </Text>
       <Text Id="__SingleUse_XJHD" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">1500</Translation>
@@ -19,15 +25,15 @@
         <Translation Language="GB">0000 </Translation>
       </Text>
       <Text Id="currentTextID" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">I(mA) :&lt;value&gt;</Translation>
+        <Translation Language="GB">I(mA)  : &lt;value&gt;</Translation>
       </Text>
       <Text Id="voltageTextID" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">V(mV):&lt;value&gt;</Translation>
+        <Translation Language="GB">V(mV) : &lt;value&gt;</Translation>
       </Text>
     </TextGroup>
   </Texts>
   <Typographies>
-    <Typography Id="Default" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacterRanges="0-9,A-Z,a-z" />
+    <Typography Id="Default" Font="digital-7.ttf" Size="25" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacterRanges="0-9,A-Z,a-z" />
     <Typography Id="Large" Font="verdana.ttf" Size="40" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacterRanges="0-9,A-Z,a-z" />
     <Typography Id="Small" Font="verdana.ttf" Size="10" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacterRanges="0-9,A-Z,a-z" />
   </Typographies>

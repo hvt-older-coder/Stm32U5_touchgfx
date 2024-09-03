@@ -111,8 +111,8 @@ all: main-build
 main-build: U5_VOM_V2.elf secondary-outputs
 
 # Tool invocations
-U5_VOM_V2.elf U5_VOM_V2.map: $(OBJS) $(USER_OBJS) D:\U5\U5_VOM_V2_4.24.0\STM32U545RETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "U5_VOM_V2.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"D:\U5\U5_VOM_V2_4.24.0\STM32U545RETXQ_FLASH.ld" -Wl,-Map="U5_VOM_V2.map" -Wl,--gc-sections -static -L"D:\U5\U5_VOM_V2_4.24.0\Middlewares\ST\touchgfx\lib\core\cortex_m33\gcc" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+U5_VOM_V2.elf U5_VOM_V2.map: $(OBJS) $(USER_OBJS) C:\Users\Admin\Documents\GitHub\vom_v1\U5_VOM_V2_4.24.0\STM32U545RETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "U5_VOM_V2.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\Admin\Documents\GitHub\vom_v1\U5_VOM_V2_4.24.0\STM32U545RETXQ_FLASH.ld" -Wl,-Map="U5_VOM_V2.map" -Wl,--gc-sections -static -L"C:\Users\Admin\Documents\GitHub\vom_v1\U5_VOM_V2_4.24.0\Middlewares\ST\touchgfx\lib\core\cortex_m33\gcc" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

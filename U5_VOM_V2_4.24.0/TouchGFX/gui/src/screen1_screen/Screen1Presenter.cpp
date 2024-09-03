@@ -21,8 +21,8 @@ void Screen1Presenter::myUpdate()
 {
 	view.myUpdateGauge();
 }
-void Screen1Presenter::updateVOM(uint32_t voltage_mV)
+void Screen1Presenter::updateVOM(uint32_t voltage_mV, unsigned int fps)
 {
-	view.updateVOM(voltage_mV);
+	view.updateVOM(voltage_mV, fps);
 }
 #endif

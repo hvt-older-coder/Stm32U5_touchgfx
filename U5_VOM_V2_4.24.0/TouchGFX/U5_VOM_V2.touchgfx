@@ -13,13 +13,9 @@
           {
             "Type": "Box",
             "Name": "box2",
+            "Y": 7,
             "Width": 240,
-            "Height": 80,
-            "Color": {
-              "Red": 35,
-              "Green": 114,
-              "Blue": 153
-            }
+            "Height": 71
           },
           {
             "Type": "Gauge",
@@ -52,11 +48,16 @@
             "Type": "TextArea",
             "Name": "textArea1",
             "X": 3,
-            "Y": 28,
-            "Width": 133,
-            "Height": 24,
+            "Y": 21,
+            "Width": 125,
+            "Height": 26,
             "TextId": "voltageTextID",
             "TextRotation": "0",
+            "Color": {
+              "Red": 13,
+              "Green": 101,
+              "Blue": 243
+            },
             "AutoSize": true,
             "Wildcard1": {
               "TextId": "__SingleUse_HDBH",
@@ -67,11 +68,17 @@
           {
             "Type": "TextArea",
             "Name": "textArea2",
-            "X": 3,
-            "Width": 127,
-            "Height": 24,
+            "X": 5,
+            "Y": -2,
+            "Width": 109,
+            "Height": 26,
             "TextId": "currentTextID",
             "TextRotation": "0",
+            "Color": {
+              "Red": 13,
+              "Green": 101,
+              "Blue": 243
+            },
             "AutoSize": true,
             "Wildcard1": {
               "TextId": "__SingleUse_XJHD",
@@ -81,13 +88,37 @@
           },
           {
             "Type": "TextArea",
+            "Name": "textArea2_1",
+            "X": 161,
+            "Y": 45,
+            "Width": 70,
+            "Height": 26,
+            "TextId": "fpsTextID",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255
+            },
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_7DEW",
+              "UseBuffer": true,
+              "BufferSize": 3
+            }
+          },
+          {
+            "Type": "TextArea",
             "Name": "textArea3",
             "X": 3,
-            "Y": 56,
-            "Width": 130,
-            "Height": 24,
+            "Y": 45,
+            "Width": 118,
+            "Height": 26,
             "TextId": "powerTextID",
             "TextRotation": "0",
+            "Color": {
+              "Red": 13,
+              "Green": 101,
+              "Blue": 243
+            },
             "AutoSize": true,
             "Wildcard1": {
               "TextId": "__SingleUse_7NX2",

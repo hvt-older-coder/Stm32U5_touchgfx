@@ -30,7 +30,7 @@ void Screen1View::myUpdateGauge()
 	}
 }
 
-void Screen1View::updateVOM(uint32_t voltage_mV)
+void Screen1View::updateVOM(uint32_t voltage_mV, unsigned int fps)
 {
 
 	Unicode::snprintf(textArea1Buffer,TEXTAREA1_SIZE, "%s", "");
@@ -44,6 +44,9 @@ void Screen1View::updateVOM(uint32_t voltage_mV)
 	textArea3.invalidate();
 	Unicode::snprintf(textArea3Buffer,TEXTAREA3_SIZE, "%d", powerW);
 	textArea3.invalidate();
+
+	Unicode::snprintf(textArea2_1Buffer,TEXTAREA2_1_SIZE, "%d", fps);
+	textArea2_1.invalidate();
 
 	voltageValue = voltage_mV*100/9999;
 	myUpdateGauge();

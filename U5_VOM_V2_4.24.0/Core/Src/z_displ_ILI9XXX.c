@@ -313,6 +313,9 @@ void ILI9XXX_Init() {
 
 	//TURN ON DISPLAY
 	Displ_WriteCommand(0x29);
+	//SET MAX BRIGHTNESS
+	//Displ_WriteCommand(0x51);
+	//Dislp_WriteData_Single(0xff);
 #if 0
 	Displ_Select();
 

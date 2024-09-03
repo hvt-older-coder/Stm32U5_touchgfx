@@ -19,7 +19,7 @@ public:
     virtual void tearDownScreen();
 #ifndef SIMULATOR
     virtual void myUpdateGauge();
-    virtual void updateVOM(uint32_t voltage_mV);
+    virtual void updateVOM(uint32_t voltage_mV, unsigned int fps);
 #endif
 protected:
 };

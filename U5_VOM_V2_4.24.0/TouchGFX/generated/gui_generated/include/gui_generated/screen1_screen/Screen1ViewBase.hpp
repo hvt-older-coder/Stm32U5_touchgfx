@@ -32,6 +32,7 @@ protected:
     touchgfx::Gauge gauge1;
     touchgfx::TextAreaWithOneWildcard textArea1;
     touchgfx::TextAreaWithOneWildcard textArea2;
+    touchgfx::TextAreaWithOneWildcard textArea2_1;
     touchgfx::TextAreaWithOneWildcard textArea3;
 
     /*
@@ -41,6 +42,8 @@ protected:
     touchgfx::Unicode::UnicodeChar textArea1Buffer[TEXTAREA1_SIZE];
     static const uint16_t TEXTAREA2_SIZE = 5;
     touchgfx::Unicode::UnicodeChar textArea2Buffer[TEXTAREA2_SIZE];
+    static const uint16_t TEXTAREA2_1_SIZE = 3;
+    touchgfx::Unicode::UnicodeChar textArea2_1Buffer[TEXTAREA2_1_SIZE];
     static const uint16_t TEXTAREA3_SIZE = 5;
     touchgfx::Unicode::UnicodeChar textArea3Buffer[TEXTAREA3_SIZE];
 

@@ -36,6 +36,8 @@ extern "C" {
 extern uint8_t update_ui;
 extern uint32_t adc_value;
 extern uint16_t uhADCxConvertedData_Voltage_mVolt;
+#define APP_FPS 40
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -16,8 +16,8 @@ Screen1ViewBase::Screen1ViewBase()
     box1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     add(box1);
 
-    box2.setPosition(0, 0, 240, 80);
-    box2.setColor(touchgfx::Color::getColorFromRGB(35, 114, 153));
+    box2.setPosition(0, 7, 240, 71);
+    box2.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     add(box2);
 
     gauge1.setBackground(touchgfx::Bitmap(BITMAP_ALTERNATE_THEME_IMAGES_WIDGETS_GAUGE_MEDIUM_BACKGROUNDS_LIGHT_FILLED_ID));
@@ -31,8 +31,8 @@ Screen1ViewBase::Screen1ViewBase()
     gauge1.setSteadyNeedleRenderingAlgorithm(touchgfx::TextureMapper::BILINEAR_INTERPOLATION);
     add(gauge1);
 
-    textArea1.setXY(3, 28);
-    textArea1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
+    textArea1.setXY(3, 21);
+    textArea1.setColor(touchgfx::Color::getColorFromRGB(13, 101, 243));
     textArea1.setLinespacing(0);
     Unicode::snprintf(textArea1Buffer, TEXTAREA1_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_HDBH).getText());
     textArea1.setWildcard(textArea1Buffer);
@@ -40,8 +40,8 @@ Screen1ViewBase::Screen1ViewBase()
     textArea1.setTypedText(touchgfx::TypedText(T_VOLTAGETEXTID));
     add(textArea1);
 
-    textArea2.setXY(3, 0);
-    textArea2.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
+    textArea2.setXY(5, -2);
+    textArea2.setColor(touchgfx::Color::getColorFromRGB(13, 101, 243));
     textArea2.setLinespacing(0);
     Unicode::snprintf(textArea2Buffer, TEXTAREA2_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_XJHD).getText());
     textArea2.setWildcard(textArea2Buffer);
@@ -49,8 +49,17 @@ Screen1ViewBase::Screen1ViewBase()
     textArea2.setTypedText(touchgfx::TypedText(T_CURRENTTEXTID));
     add(textArea2);
 
-    textArea3.setXY(3, 56);
-    textArea3.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
+    textArea2_1.setXY(161, 45);
+    textArea2_1.setColor(touchgfx::Color::getColorFromRGB(255, 0, 0));
+    textArea2_1.setLinespacing(0);
+    Unicode::snprintf(textArea2_1Buffer, TEXTAREA2_1_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_7DEW).getText());
+    textArea2_1.setWildcard(textArea2_1Buffer);
+    textArea2_1.resizeToCurrentText();
+    textArea2_1.setTypedText(touchgfx::TypedText(T_FPSTEXTID));
+    add(textArea2_1);
+
+    textArea3.setXY(3, 45);
+    textArea3.setColor(touchgfx::Color::getColorFromRGB(13, 101, 243));
     textArea3.setLinespacing(0);
     Unicode::snprintf(textArea3Buffer, TEXTAREA3_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_7NX2).getText());
     textArea3.setWildcard(textArea3Buffer);

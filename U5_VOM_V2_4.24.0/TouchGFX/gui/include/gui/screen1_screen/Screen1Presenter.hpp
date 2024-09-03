@@ -32,7 +32,7 @@ public:
     virtual ~Screen1Presenter() {}
 #ifndef SIMULATOR
     void myUpdate();
-    void updateVOM(uint32_t voltage_mV);
+    void updateVOM(uint32_t voltage_mV, unsigned int fps);
 #endif
 
 private:
